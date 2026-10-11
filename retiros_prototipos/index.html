@@ -1,0 +1,1685 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, viewport-fit=cover"
+    >
+
+    <title>Mis retiros · Prototipo InnovaSoft</title>
+
+    <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap"
+    >
+
+    <style>
+        :root {
+            --bg: #e8edf6;
+            --card: #f5f7fc;
+            --ink: #1b2b4b;
+            --mute: #586a8c;
+            --line: #cbd5e8;
+            --pri: #2f5fb0;
+            --pri-ink: #f5f7fc;
+            --acc: #e0a030;
+            --ok: #2f7d4f;
+            --bad: #b4402f;
+
+            box-sizing: border-box;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                --bg: #101a2e;
+                --card: #18243d;
+                --ink: #e3eafa;
+                --mute: #9aaccb;
+                --line: #2b3b5c;
+                --pri: #7aa2f0;
+                --pri-ink: #0d1626;
+                --acc: #e8b54f;
+                --ok: #6cc08c;
+                --bad: #e5806f;
+            }
+        }
+
+        :root[data-theme="dark"] {
+            --bg: #101a2e;
+            --card: #18243d;
+            --ink: #e3eafa;
+            --mute: #9aaccb;
+            --line: #2b3b5c;
+            --pri: #7aa2f0;
+            --pri-ink: #0d1626;
+            --acc: #e8b54f;
+            --ok: #6cc08c;
+            --bad: #e5806f;
+        }
+
+        *,
+        *:before,
+        *:after {
+            box-sizing: inherit;
+        }
+
+        html {
+            scroll-padding-top: env(safe-area-inset-top, 0px);
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--ink);
+            font: 400 16px/1.5 Figtree, system-ui, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: Newsreader, Georgia, serif;
+            font-weight: 600;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        h1 {
+            font-size: 1.9rem;
+        }
+
+        h2 {
+            font-size: 1.45rem;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+        }
+
+        header {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 22px 16px 8px;
+        }
+
+        header p {
+            margin: 4px 0 0;
+            color: var(--mute);
+        }
+
+        nav {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 8px 16px;
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--line);
+        }
+
+        nav button {
+            border: 0;
+            background: none;
+            color: var(--mute);
+            font: 500 15px Figtree, sans-serif;
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        nav button[aria-current="page"] {
+            background: var(--pri);
+            color: var(--pri-ink);
+        }
+
+        main {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 18px 16px 60px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 14px;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            font-size: 0.92rem;
+            margin: 12px 0 4px;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            font: inherit;
+            color: var(--ink);
+            background: var(--bg);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 10px 12px;
+        }
+
+        textarea {
+            min-height: 84px;
+            resize: vertical;
+        }
+
+        :focus-visible {
+            outline: 3px solid var(--acc);
+            outline-offset: 2px;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 560px) {
+            .row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .btn {
+            border: 1px solid var(--pri);
+            background: var(--pri);
+            color: var(--pri-ink);
+            font: 600 15px Figtree, sans-serif;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .btn.sec {
+            background: none;
+            color: var(--pri);
+        }
+
+        .btn.link {
+            border: 0;
+            background: none;
+            color: var(--pri);
+            padding: 6px 0;
+            text-decoration: underline;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 18px;
+        }
+
+        .steps {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+
+        .steps span {
+            flex: 1;
+            height: 5px;
+            border-radius: 3px;
+            background: var(--line);
+        }
+
+        .steps span.on {
+            background: var(--pri);
+        }
+
+        .steplbl {
+            color: var(--mute);
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+        }
+
+        .opt {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            padding: 10px 12px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            margin-top: 8px;
+            cursor: pointer;
+        }
+
+        .opt input {
+            width: auto;
+            margin-top: 4px;
+        }
+
+        .opt small {
+            display: block;
+            color: var(--mute);
+        }
+
+        .mini {
+            border: 1px dashed var(--pri);
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 12px;
+        }
+
+        .tag {
+            display: inline-block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 99px;
+            background: var(--bg);
+            border: 1px solid var(--line);
+        }
+
+        .tag.imp {
+            color: var(--bad);
+            border-color: var(--bad);
+        }
+
+        .tag.ok {
+            color: var(--ok);
+            border-color: var(--ok);
+        }
+
+        .item {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center;
+            width: 100%;
+            text-align: left;
+            background: var(--card);
+            color: var(--ink);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            font: inherit;
+        }
+
+        .item:hover {
+            border-color: var(--pri);
+        }
+
+        .item small {
+            color: var(--mute);
+            display: block;
+        }
+
+        dl {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 8px 14px;
+            margin: 14px 0 0;
+        }
+
+        dt {
+            color: var(--mute);
+        }
+
+        dd {
+            margin: 0;
+        }
+
+        @media (max-width: 560px) {
+            dl {
+                grid-template-columns: 1fr;
+            }
+
+            dt {
+                margin-top: 6px;
+            }
+        }
+
+        .empty {
+            text-align: center;
+            color: var(--mute);
+            padding: 34px 10px;
+        }
+
+        .err {
+            color: var(--bad);
+            font-size: 0.9rem;
+            margin-top: 6px;
+        }
+
+        #toast {
+            position: fixed;
+            left: 50%;
+            bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+            transform: translateX(-50%);
+            background: var(--ink);
+            color: var(--bg);
+            padding: 10px 18px;
+            border-radius: 99px;
+            font-weight: 500;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            max-width: 90%;
+        }
+
+        #toast.on {
+            opacity: 1;
+        }
+
+        @media (max-width: 560px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            nav {
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                max-width: none;
+                margin: 0;
+                padding: 6px 8px
+                    calc(6px + env(safe-area-inset-bottom, 0px));
+                gap: 4px;
+                flex-wrap: nowrap;
+                background: var(--card);
+                border-top: 1px solid var(--line);
+                border-bottom: 0;
+                z-index: 5;
+            }
+
+            nav button {
+                flex: 1;
+                padding: 12px 4px;
+                font-size: 13px;
+                line-height: 1.2;
+            }
+
+            main {
+                padding-bottom: 110px;
+            }
+
+            .actions .btn:not(.link) {
+                flex: 1 1 100%;
+                padding: 13px;
+            }
+
+            .btn.link {
+                width: 100%;
+                text-align: center;
+            }
+
+            #toast {
+                bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+            }
+
+            .card {
+                padding: 16px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Mis retiros</h1>
+        <p>
+            Prototipo Grupo InnovaSoft · TPI 2026
+        </p>
+    </header>
+
+    <nav aria-label="Casos de uso">
+        <button data-v="lista">
+            Consultar retiros
+        </button>
+
+        <button data-v="nuevo">
+            Registrar retiro
+        </button>
+
+        <button data-v="acts">
+            Registrar actividad
+        </button>
+    </nav>
+
+    <main id="app"></main>
+
+    <div
+        id="toast"
+        role="status"
+        aria-live="polite"
+    ></div>
+
+    <script>
+        const KEY = 'innovasoft-retiros-v1';
+
+        const seed = () => ({
+            tipos: [
+                {
+                    id: 1,
+                    nombre: 'Meditación',
+                    desc: 'Silencio y atención plena'
+                },
+                {
+                    id: 2,
+                    nombre: 'Yoga y naturaleza',
+                    desc: 'Práctica corporal al aire libre'
+                },
+                {
+                    id: 3,
+                    nombre: 'Trekking',
+                    desc: 'Cansancio y buenas vistas'
+                }
+            ],
+
+            acts: [
+                {
+                    id: 1,
+                    nombre: 'Caminata consciente',
+                    desc: 'Recorrido en silencio por el monte'
+                },
+                {
+                    id: 2,
+                    nombre: 'Meditación guiada',
+                    desc: 'Sesión matutina de 60 minutos'
+                },
+                {
+                    id: 3,
+                    nombre: 'Trekking grupal',
+                    desc: 'Charla y risas mientras escalas'
+                }
+            ],
+
+            acomp: [
+                {
+                    id: 1,
+                    nombre: 'Valeria',
+                    apellido: 'Ortiz',
+                    telefono: '3534-111222'
+                },
+                {
+                    id: 2,
+                    nombre: 'Paola',
+                    apellido: 'Simieli',
+                    telefono: '3534-333444'
+                }
+            ],
+
+            coords: [
+                {
+                    id: 1,
+                    nombre: 'Lionel',
+                    apellido: 'Messi',
+                    telefono: '3541-555666',
+                    mail: 'el10forever@retiros.com'
+                },
+                {
+                    id: 2,
+                    nombre: 'Ramiro',
+                    apellido: 'Caporaletti',
+                    telefono: '3541-777888',
+                    mail: 'ramacapo@retiros.com'
+                }
+            ],
+
+            retiros: [
+                {
+                    id: 1,
+                    nombre: 'Trek de atardecer',
+                    lugar: 'Cerro Uritorco, Córdoba',
+                    ini: '2026-11-14',
+                    fin: '2026-11-16',
+                    tipo: 3,
+                    acts: [3],
+                    acomp: [1],
+                    coord: 1,
+                    monto: 10000,
+                    limite: '2026-10-30',
+                    estado: 'Impago',
+                    alta: '2026-10-01'
+                }
+            ]
+        });
+
+        let S;
+
+        try {
+            S = JSON.parse(localStorage.getItem(KEY)) || seed();
+        } catch (e) {
+            S = seed();
+        }
+
+        const save = () => {
+            try {
+                localStorage.setItem(KEY, JSON.stringify(S));
+            } catch (e) {}
+        };
+
+        const $ = s => document.querySelector(s);
+
+        const e = t =>
+            String(t ?? '').replace(
+                /[&<>"']/g,
+                c => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#39;'
+                }[c])
+            );
+
+        const nid = a =>
+            a.reduce((m, x) => Math.max(m, x.id), 0) + 1;
+
+        const by = (a, id) =>
+            a.find(x => x.id == id);
+
+        const fecha = d =>
+            d ? d.split('-').reverse().join('/') : '—';
+
+        const money = n =>
+            '$ ' + Number(n).toLocaleString('es-AR');
+
+        let tt;
+
+        const toast = m => {
+            const t = $('#toast');
+
+            t.textContent = m;
+            t.classList.add('on');
+
+            clearTimeout(tt);
+
+            tt = setTimeout(
+                () => t.classList.remove('on'),
+                2600
+            );
+        };
+
+        let view = 'lista';
+        let sel = null;
+        let errs = {};
+        let actDraft = null;
+
+        const blank = () => ({
+            step: 0,
+            adding: null,
+            d: {
+                nombre: '',
+                lugar: '',
+                ini: '',
+                fin: '',
+                tipo: '',
+                acts: [],
+                acomp: [],
+                coord: '',
+                monto: '',
+                limite: ''
+            }
+        });
+
+        let W = blank();
+
+        document
+            .querySelectorAll('nav button')
+            .forEach(b => {
+                b.onclick = () => go(b.dataset.v);
+            });
+
+        function go(v) {
+            view = v;
+            sel = null;
+            errs = {};
+            render();
+        }
+
+        function render() {
+            document
+                .querySelectorAll('nav button')
+                .forEach(b => {
+                    if (b.dataset.v === view) {
+                        b.setAttribute('aria-current', 'page');
+                    } else {
+                        b.removeAttribute('aria-current');
+                    }
+                });
+
+            $('#app').innerHTML =
+                view === 'lista'
+                    ? vLista()
+                    : view === 'nuevo'
+                        ? vNuevo()
+                        : vActs();
+        }
+
+        /* ---------- CU Consultar retiros ---------- */
+
+        function vLista() {
+            if (sel) {
+                const r = by(S.retiros, sel);
+
+                return `
+                    <button
+                        class="btn link"
+                        onclick="sel=null;render()"
+                    >
+                        ← Volver a la lista
+                    </button>
+
+                    <div class="card">
+                        <h2>${e(r.nombre)}</h2>
+
+                        <p style="margin:6px 0 0">
+                            <span
+                                class="tag ${
+                                    r.estado === 'Pagado'
+                                        ? 'ok'
+                                        : r.estado === 'Impago'
+                                            ? 'imp'
+                                            : ''
+                                }"
+                            >
+                                Pago: ${e(r.estado)}
+                            </span>
+                        </p>
+
+                        <dl>
+                            <dt>Lugar</dt>
+                            <dd>${e(r.lugar)}</dd>
+
+                            <dt>Fechas</dt>
+                            <dd>
+                                ${fecha(r.ini)} al ${fecha(r.fin)}
+                            </dd>
+
+                            <dt>Tipo de retiro</dt>
+                            <dd>
+                                ${e(by(S.tipos, r.tipo)?.nombre)}
+                            </dd>
+
+                            <dt>Actividades</dt>
+                            <dd>
+                                ${
+                                    r.acts
+                                        .map(i =>
+                                            e(by(S.acts, i)?.nombre)
+                                        )
+                                        .join(', ') || '—'
+                                }
+                            </dd>
+
+                            <dt>Acompañantes</dt>
+                            <dd>
+                                ${
+                                    r.acomp
+                                        .map(i => {
+                                            const a = by(S.acomp, i);
+
+                                            return e(
+                                                a.nombre +
+                                                ' ' +
+                                                a.apellido
+                                            );
+                                        })
+                                        .join(', ') ||
+                                    'Sin acompañantes'
+                                }
+                            </dd>
+
+                            <dt>Coordinador</dt>
+                            <dd>
+                                ${
+                                    (c =>
+                                        e(
+                                            c.nombre +
+                                            ' ' +
+                                            c.apellido
+                                        ) +
+                                        '<br><small>' +
+                                        e(
+                                            c.telefono +
+                                            ' · ' +
+                                            c.mail
+                                        ) +
+                                        '</small>'
+                                    )(by(S.coords, r.coord))
+                                }
+                            </dd>
+
+                            <dt>Monto total</dt>
+                            <dd>${money(r.monto)}</dd>
+
+                            <dt>Pagar antes del</dt>
+                            <dd>${fecha(r.limite)}</dd>
+
+                            <dt>Registrado el</dt>
+                            <dd>${fecha(r.alta)}</dd>
+                        </dl>
+                    </div>
+                `;
+            }
+
+            if (!S.retiros.length) {
+                return `
+                    <div class="card empty">
+                        <h3>
+                            No hay retiros disponibles para consultar
+                        </h3>
+
+                        <p>
+                            Registrá tu primer retiro para verlo acá.
+                        </p>
+
+                        <button
+                            class="btn"
+                            onclick="go('nuevo')"
+                        >
+                            Registrar retiro
+                        </button>
+                    </div>
+                `;
+            }
+
+            const l = [...S.retiros].sort(
+                (a, b) => a.ini.localeCompare(b.ini)
+            );
+
+            return `
+                <h2 style="margin-bottom:12px">
+                    Retiros registrados
+                </h2>
+
+                ${l
+                    .map(
+                        r => `
+                            <button
+                                class="item"
+                                onclick="sel=${r.id};render()"
+                            >
+                                <span>
+                                    <strong>${e(r.nombre)}</strong>
+
+                                    <small>
+                                        ${e(r.lugar)} ·
+                                        ${fecha(r.ini)} al
+                                        ${fecha(r.fin)}
+                                    </small>
+                                </span>
+
+                                <span
+                                    class="tag ${
+                                        r.estado === 'Pagado'
+                                            ? 'ok'
+                                            : 'imp'
+                                    }"
+                                >
+                                    ${e(r.estado)}
+                                </span>
+                            </button>
+                        `
+                    )
+                    .join('')}
+            `;
+        }
+
+        /* ---------- CU Registrar retiro ---------- */
+
+        const STEPS = [
+            'Datos',
+            'Tipo',
+            'Actividades',
+            'Acompañantes',
+            'Coordinador',
+            'Pago',
+            'Confirmar'
+        ];
+
+        function sync() {
+            const d = W.d;
+            const g = id => document.getElementById(id);
+
+            [
+                'nombre',
+                'lugar',
+                'ini',
+                'fin',
+                'monto',
+                'limite'
+            ].forEach(k => {
+                if (g('f_' + k)) {
+                    d[k] = g('f_' + k).value;
+                }
+            });
+
+            ['tipo', 'coord'].forEach(k => {
+                const x = document.querySelector(
+                    `input[name=${k}]:checked`
+                );
+
+                if (x) {
+                    d[k] = x.value;
+                }
+            });
+
+            if (g('opts_acts')) {
+                d.acts = [
+                    ...document.querySelectorAll(
+                        'input[name=acts]:checked'
+                    )
+                ].map(x => +x.value);
+            }
+
+            if (g('opts_acomp')) {
+                d.acomp = [
+                    ...document.querySelectorAll(
+                        'input[name=acomp]:checked'
+                    )
+                ].map(x => +x.value);
+            }
+        }
+
+        function opts(name, list, type, lbl) {
+            return `
+                <div id="opts_${name}">
+                    ${list
+                        .map(
+                            x => `
+                                <label class="opt">
+                                    <input
+                                        type="${type}"
+                                        name="${name}"
+                                        value="${x.id}"
+                                        ${
+                                            type === 'radio'
+                                                ? W.d[name] == x.id
+                                                : W.d[name].includes(x.id)
+                                        }
+                                        ? 'checked'
+                                        : ''
+                                    }
+                                    >
+
+                                    <span>
+                                        ${e(lbl(x))}
+
+                                        <small>
+                                            ${e(
+                                                x.desc ||
+                                                x.telefono ||
+                                                ''
+                                            )}
+                                        </small>
+                                    </span>
+                                </label>
+                            `
+                        )
+                        .join('')}
+                </div>
+            `;
+        }
+
+        const MINI = {
+            tipo: [
+                'tipo de retiro',
+                [
+                    ['nombre', 'Nombre'],
+                    ['desc', 'Descripción']
+                ],
+                'tipos'
+            ],
+
+            act: [
+                'actividad',
+                [
+                    ['nombre', 'Nombre'],
+                    ['desc', 'Descripción']
+                ],
+                'acts'
+            ],
+
+            acomp: [
+                'acompañante',
+                [
+                    ['nombre', 'Nombre'],
+                    ['apellido', 'Apellido'],
+                    ['telefono', 'Teléfono']
+                ],
+                'acomp'
+            ],
+
+            coord: [
+                'coordinador',
+                [
+                    ['nombre', 'Nombre'],
+                    ['apellido', 'Apellido'],
+                    ['telefono', 'Teléfono'],
+                    ['mail', 'Mail']
+                ],
+                'coords'
+            ]
+        };
+
+        function mini() {
+            const k = W.adding;
+
+            if (!k) {
+                return '';
+            }
+
+            const [t, f] = MINI[k];
+
+            return `
+                <div class="mini">
+                    <h3>Registrar ${t}</h3>
+
+                    ${f
+                        .map(
+                            ([id, l]) => `
+                                <label for="m_${id}">
+                                    ${l}
+                                </label>
+
+                                <input id="m_${id}">
+                            `
+                        )
+                        .join('')}
+
+                    <div
+                        class="err"
+                        id="m_err"
+                    ></div>
+
+                    <div class="actions">
+                        <button
+                            class="btn"
+                            onclick="saveMini()"
+                        >
+                            Registrar ${t}
+                        </button>
+
+                        <button
+                            class="btn sec"
+                            onclick="sync();W.adding=null;render()"
+                        >
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function saveMini() {
+            const k = W.adding;
+            const [t, f, col] = MINI[k];
+            const o = {};
+
+            for (const [id] of f) {
+                o[id] = document
+                    .getElementById('m_' + id)
+                    .value
+                    .trim();
+
+                if (!o[id]) {
+                    $('#m_err').textContent =
+                        'Completá todos los campos.';
+
+                    return;
+                }
+            }
+
+            o.id = nid(S[col]);
+            S[col].push(o);
+
+            save();
+
+            const m = {
+                tipo: ['tipo', true],
+                act: ['acts', false],
+                acomp: ['acomp', false],
+                coord: ['coord', true]
+            }[k];
+
+            if (m[1]) {
+                W.d[m[0]] = o.id;
+            } else {
+                W.d[m[0]].push(o.id);
+            }
+
+            W.adding = null;
+
+            toast(
+                t[0].toUpperCase() +
+                t.slice(1) +
+                ' registrado'
+            );
+
+            render();
+        }
+
+        const addBtn = (k, txt) =>
+            W.adding
+                ? ''
+                : `
+                    <button
+                        class="btn link"
+                        onclick="sync();W.adding='${k}';render()"
+                    >
+                        ${txt}
+                    </button>
+                `;
+
+        function vNuevo() {
+            const d = W.d;
+            const s = W.step;
+
+            let h = `
+                <div class="steps">
+                    ${STEPS
+                        .map(
+                            (_, i) => `
+                                <span
+                                    class="${i <= s ? 'on' : ''}"
+                                ></span>
+                            `
+                        )
+                        .join('')}
+                </div>
+
+                <div class="steplbl">
+                    Paso ${s + 1} de ${STEPS.length}
+                </div>
+
+                <div class="card">
+            `;
+
+            if (s === 0) {
+                h += `
+                    <h2>Datos del retiro</h2>
+
+                    <label for="f_nombre">
+                        Nombre
+                    </label>
+
+                    <input
+                        id="f_nombre"
+                        value="${e(d.nombre)}"
+                    >
+
+                    <label for="f_lugar">
+                        Lugar
+                    </label>
+
+                    <input
+                        id="f_lugar"
+                        value="${e(d.lugar)}"
+                    >
+
+                    <div class="row">
+                        <div>
+                            <label for="f_ini">
+                                Fecha de inicio
+                            </label>
+
+                            <input
+                                type="date"
+                                id="f_ini"
+                                value="${d.ini}"
+                            >
+                        </div>
+
+                        <div>
+                            <label for="f_fin">
+                                Fecha de fin
+                            </label>
+
+                            <input
+                                type="date"
+                                id="f_fin"
+                                value="${d.fin}"
+                            >
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (s === 1) {
+                h += `
+                    <h2>Tipo de retiro</h2>
+
+                    ${opts(
+                        'tipo',
+                        S.tipos,
+                        'radio',
+                        x => x.nombre
+                    )}
+
+                    ${addBtn(
+                        'tipo',
+                        '+ Registrar un nuevo tipo de retiro'
+                    )}
+
+                    ${mini()}
+                `;
+            }
+
+            if (s === 2) {
+                h += `
+                    <h2>Actividades</h2>
+
+                    ${
+                        S.acts.length
+                            ? opts(
+                                'acts',
+                                S.acts,
+                                'checkbox',
+                                x => x.nombre
+                            )
+                            : `
+                                <p class="empty">
+                                    Todavía no hay actividades.
+                                </p>
+                            `
+                    }
+
+                    ${addBtn(
+                        'act',
+                        '+ Registrar una nueva actividad'
+                    )}
+
+                    ${mini()}
+                `;
+            }
+
+            if (s === 3) {
+                h += `
+                    <h2>Acompañantes</h2>
+
+                    <p
+                        style="
+                            color:var(--mute);
+                            margin:4px 0 0
+                        "
+                    >
+                        Opcional: podés continuar sin acompañantes.
+                    </p>
+
+                    ${opts(
+                        'acomp',
+                        S.acomp,
+                        'checkbox',
+                        x => x.nombre + ' ' + x.apellido
+                    )}
+
+                    ${addBtn(
+                        'acomp',
+                        '+ Registrar un nuevo acompañante'
+                    )}
+
+                    ${mini()}
+                `;
+            }
+
+            if (s === 4) {
+                h += `
+                    <h2>Coordinador</h2>
+
+                    ${opts(
+                        'coord',
+                        S.coords,
+                        'radio',
+                        x => x.nombre + ' ' + x.apellido
+                    )}
+
+                    ${addBtn(
+                        'coord',
+                        '+ Registrar un nuevo coordinador'
+                    )}
+
+                    ${mini()}
+                `;
+            }
+
+            if (s === 5) {
+                h += `
+                    <h2>Pago del retiro</h2>
+
+                    <div class="row">
+                        <div>
+                            <label for="f_monto">
+                                Monto total ($)
+                            </label>
+
+                            <input
+                                type="number"
+                                min="1"
+                                id="f_monto"
+                                value="${e(d.monto)}"
+                            >
+                        </div>
+
+                        <div>
+                            <label for="f_limite">
+                                Fecha límite de pago
+                            </label>
+
+                            <input
+                                type="date"
+                                id="f_limite"
+                                value="${d.limite}"
+                            >
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (s === 6) {
+                h += `
+                    <h2>¿Registrar el retiro?</h2>
+
+                    <dl>
+                        <dt>Nombre</dt>
+                        <dd>${e(d.nombre)}</dd>
+
+                        <dt>Lugar</dt>
+                        <dd>${e(d.lugar)}</dd>
+
+                        <dt>Fechas</dt>
+                        <dd>
+                            ${fecha(d.ini)} al ${fecha(d.fin)}
+                        </dd>
+
+                        <dt>Tipo</dt>
+                        <dd>
+                            ${e(by(S.tipos, d.tipo)?.nombre)}
+                        </dd>
+
+                        <dt>Actividades</dt>
+                        <dd>
+                            ${
+                                d.acts
+                                    .map(
+                                        i =>
+                                            e(
+                                                by(S.acts, i)
+                                                    .nombre
+                                            )
+                                    )
+                                    .join(', ')
+                            }
+                        </dd>
+
+                        <dt>Acompañantes</dt>
+                        <dd>
+                            ${
+                                d.acomp
+                                    .map(
+                                        i =>
+                                            e(
+                                                by(S.acomp, i)
+                                                    .nombre
+                                            )
+                                    )
+                                    .join(', ') ||
+                                'Sin acompañantes'
+                            }
+                        </dd>
+
+                        <dt>Coordinador</dt>
+                        <dd>
+                            ${e(
+                                by(S.coords, d.coord)?.nombre
+                            )}
+                        </dd>
+
+                        <dt>Pago</dt>
+                        <dd>
+                            ${money(d.monto)}
+                            antes del
+                            ${fecha(d.limite)}
+                        </dd>
+                    </dl>
+                `;
+            }
+
+            h += `
+                    <div
+                        class="err"
+                        id="err"
+                    >
+                        ${errs.m || ''}
+                    </div>
+                </div>
+
+                <div class="actions">
+            `;
+
+            if (s > 0) {
+                h += `
+                    <button
+                        class="btn sec"
+                        onclick="sync();W.step--;errs={};render()"
+                    >
+                        Atrás
+                    </button>
+                `;
+            }
+
+            h +=
+                s < 6
+                    ? `
+                        <button
+                            class="btn"
+                            onclick="next()"
+                        >
+                            Continuar
+                        </button>
+                    `
+                    : `
+                        <button
+                            class="btn"
+                            onclick="finish()"
+                        >
+                            Registrar retiro
+                        </button>
+                    `;
+
+            return (
+                h +
+                `
+                    <button
+                        class="btn link"
+                        onclick="cancelar()"
+                    >
+                        Cancelar
+                    </button>
+                </div>
+                `
+            );
+        }
+
+        function next() {
+            sync();
+
+            const d = W.d;
+            const s = W.step;
+            let m = '';
+
+            if (s === 0) {
+                if (
+                    !d.nombre.trim() ||
+                    !d.lugar.trim() ||
+                    !d.ini ||
+                    !d.fin
+                ) {
+                    m =
+                        'Completá nombre, lugar y fechas.';
+                } else if (d.fin < d.ini) {
+                    m =
+                        'La fecha de fin no puede ser anterior a la de inicio.';
+                }
+            }
+
+            if (s === 1 && !d.tipo) {
+                m =
+                    'Seleccioná un tipo de retiro.';
+            }
+
+            if (s === 2 && !d.acts.length) {
+                m =
+                    'Seleccioná al menos una actividad.';
+            }
+
+            if (s === 4 && !d.coord) {
+                m =
+                    'Seleccioná un coordinador.';
+            }
+
+            if (s === 5) {
+                if (!+d.monto > 0 || !d.limite) {
+                    m =
+                        'Ingresá un monto mayor a cero y la fecha límite.';
+                } else if (d.limite > d.ini) {
+                    m =
+                        'La fecha límite de pago debe ser anterior al inicio del retiro.';
+                }
+            }
+
+            errs = { m };
+
+            if (m) {
+                render();
+                return;
+            }
+
+            W.step++;
+            render();
+        }
+
+        function finish() {
+            const d = W.d;
+
+            S.retiros.push({
+                id: nid(S.retiros),
+                nombre: d.nombre.trim(),
+                lugar: d.lugar.trim(),
+                ini: d.ini,
+                fin: d.fin,
+                tipo: +d.tipo,
+                acts: d.acts,
+                acomp: d.acomp,
+                coord: +d.coord,
+                monto: +d.monto,
+                limite: d.limite,
+                estado: 'Impago',
+                alta: new Date()
+                    .toISOString()
+                    .slice(0, 10)
+            });
+
+            save();
+
+            W = blank();
+
+            toast('Retiro registrado');
+
+            go('lista');
+        }
+
+        function cancelar() {
+            W = blank();
+
+            toast('Registro cancelado');
+
+            go('lista');
+        }
+
+        /* ---------- CU Registrar actividad ---------- */
+
+        function vActs() {
+            let h = `
+                <div class="card">
+                    <h2>Registrar actividad</h2>
+            `;
+
+            if (actDraft) {
+                h += `
+                    <p style="margin:10px 0 0">
+                        ¿Registrar la actividad
+                        <strong>
+                            ${e(actDraft.nombre)}
+                        </strong>?
+                    </p>
+
+                    <p
+                        style="
+                            color:var(--mute);
+                            margin:4px 0 0
+                        "
+                    >
+                        ${e(actDraft.desc)}
+                    </p>
+
+                    <div class="actions">
+                        <button
+                            class="btn"
+                            onclick="confirmAct()"
+                        >
+                            Registrar actividad
+                        </button>
+
+                        <button
+                            class="btn sec"
+                            onclick="actDraft=null;render()"
+                        >
+                            Cancelar
+                        </button>
+                    </div>
+                `;
+            } else {
+                h += `
+                    <label for="a_n">
+                        Nombre
+                    </label>
+
+                    <input
+                        id="a_n"
+                        maxlength="60"
+                    >
+
+                    <label for="a_d">
+                        Descripción
+                    </label>
+
+                    <textarea
+                        id="a_d"
+                        maxlength="240"
+                    ></textarea>
+
+                    <div class="err">
+                        ${errs.a || ''}
+                    </div>
+
+                    <div class="actions">
+                        <button
+                            class="btn"
+                            onclick="draftAct()"
+                        >
+                            Continuar
+                        </button>
+                    </div>
+                `;
+            }
+
+            h += `
+                </div>
+
+                <h3 style="margin:18px 0 8px">
+                    Actividades registradas (${S.acts.length})
+                </h3>
+            `;
+
+            h += S.acts.length
+                ? S.acts
+                    .map(
+                        a => `
+                            <div
+                                class="item"
+                                style="cursor:default"
+                            >
+                                <span>
+                                    <strong>
+                                        ${e(a.nombre)}
+                                    </strong>
+
+                                    <small>
+                                        ${e(a.desc)}
+                                    </small>
+                                </span>
+                            </div>
+                        `
+                    )
+                    .join('')
+                : `
+                    <div class="card empty">
+                        Todavía no registraste actividades.
+                    </div>
+                `;
+
+            return h;
+        }
+
+        function draftAct() {
+            const n = $('#a_n').value.trim();
+            const d = $('#a_d').value.trim();
+
+            if (!n || !d) {
+                errs.a =
+                    'Escribí un nombre y una descripción.';
+
+                render();
+
+                return;
+            }
+
+            if (
+                S.acts.some(
+                    a =>
+                        a.nombre.toLowerCase() ===
+                        n.toLowerCase()
+                )
+            ) {
+                errs.a =
+                    'Ya existe una actividad con ese nombre.';
+
+                render();
+
+                $('#a_n').value = n;
+                $('#a_d').value = d;
+
+                return;
+            }
+
+            errs = {};
+            actDraft = {
+                nombre: n,
+                desc: d
+            };
+
+            render();
+        }
+
+        function confirmAct() {
+            S.acts.push({
+                id: nid(S.acts),
+                ...actDraft
+            });
+
+            actDraft = null;
+
+            save();
+
+            toast('Actividad registrada');
+
+            render();
+        }
+
+        render();
+    </script>
+
+</body>
+</html>
